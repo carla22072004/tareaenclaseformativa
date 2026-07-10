@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resolución de la Práctica</title>
+    <style>
+        body {
+            font-family: "Latin Modern Roman", "Times New Roman", Times, serif;
+            line-height: 1.5;
+            color: #000;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #fff;
+        }
+        h2, h3 {
+            color: #1a5e95;
+            border-bottom: 1px solid #1a5e95;
+            padding-bottom: 0.2rem;
+        }
+        /* Tabla comparativa principal */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+        th, td {
+            border: 1px solid #999;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        .table-blue th {
+            background-color: #1a5e95;
+            color: white;
+            font-weight: bold;
+            border-color: #1a5e95;
+        }
+        .table-red th {
+            background-color: #8a1f24;
+            color: white;
+            font-weight: bold;
+            border-color: #8a1f24;
+        }
+        .col-criterio {
+            font-weight: bold;
+            width: 20%;
+        }
+        /* Cajas estilo LaTeX / tcolorbox */
+        .caja-orange {
+            border: 1px solid #d37d2f;
+            background-color: #faeedf;
+            border-radius: 5px;
+            padding: 0;
+            margin-bottom: 2rem;
+        }
+        .caja-orange-header {
+            background-color: #d37d2f;
+            color: white;
+            font-weight: bold;
+            padding: 8px 12px;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+        .caja-orange-content {
+            padding: 12px;
+        }
+        .caja-blue {
+            border: 1px solid #3c4899;
+            background-color: #e5e9f4;
+            border-radius: 5px;
+            padding: 0;
+            margin-bottom: 2rem;
+        }
+        .caja-blue-header {
+            background-color: #3c4899;
+            color: white;
+            font-weight: bold;
+            padding: 8px 12px;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+        .caja-blue-content {
+            padding: 12px;
+        }
+        code {
+            font-family: "Courier New", Courier, monospace;
+            background: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Tabla comparativa de las tres plataformas</h2>
+
+    <table class="table-blue">
+        <thead>
+            <tr>
+                <th class="col-criterio">Criterio</th>
+                <th>PHP 8</th>
+                <th>ASP.NET Core 8</th>
+                <th>Java / Spring Boot 3</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="col-criterio">Iniciar sesion</td>
+                <td><code>session_start()</code> al inicio de cada script</td>
+                <td><code>AddSession()</code> en Program.cs + <code>UseSession()</code> middleware</td>
+                <td>Automatico con Spring MVC; <code>HttpSession</code> inyectada en el metodo</td>
+            </tr>
+            <tr>
+                <td class="col-criterio">Guardar objeto</td>
+                <td><code>$_SESSION[k] = array(...)</code> nativo</td>
+                <td>Serializar a JSON + <code>Session.SetString()</code></td>
+                <td><code>session.setAttribute(k, objeto)</code> directo</td>
+            </tr>
+            <tr>
+                <td class="col-criterio">Leer objeto</td>
+                <td><code>$_SESSION[k] ?? []</code></td>
+                <td><code>Session.GetString()</code> + deserializar JSON</td>
+                <td><code>(Tipo) session.getAttribute(k)</code> con cast</td>
+            </tr>
+            <tr>
+                <td class="col-criterio">Eliminar sesion</td>
+                <td><code>session_destroy()</code></td>
+                <td><code>Session.Clear()</code></td>
+                <td><code>session.invalidate()</code></td>
+            </tr>
+            <tr>
+                <td class="col-criterio">Nombre cookie</td>
+                <td><code>PHPSESSID</code> (configurable)</td>
+                <td><code>.AspNetCore.Session</code> (configurable)</td>
+                <td><code>JSESSIONID</code> (configurable en YAML)</td>
+            </tr>
+            <tr>
+                <td class="col-criterio">HttpOnly</td>
+                <td><code>ini_set('session.cookie_httponly', '1')</code></td>
+                <td><code>Cookie.HttpOnly = true</code> en AddSession()</td>
+                <td><code>server.servlet.session.cookie.httpOnly=true</code></td>
+            </tr>
+            <tr>
+                <td class="col-criterio">Secure</td>
+                <td><code>ini_set('session.cookie_secure', '1')</code></td>
+                <td><code>Cookie.SecurePolicy = Always</code></td>
+                <td><code>server.servlet.session.cookie.secure=true</code></td>
+            </tr>
+            <tr>
+                <td class="col-criterio">SameSite</td>
+                <td><code>ini_set('session.cookie_samesite', 'Strict')</code></td>
+                <td><code>Cookie.SameSite = SameSiteMode.Strict</code></td>
+                <td><code>server.servlet.session.cookie.sameSite=strict</code></td>
+            </tr>
+            <tr>
+                <td class="col-criterio">Almacenamiento</td>
+                <td>Archivos en disco (<code>/tmp</code>) o Redis con extension</td>
+                <td>Memoria, Redis, SQL Server (configurable)</td>
+                <td>Memoria JVM, Redis, JDBC (configurable)</td>
+            </tr>
+            <tr>
+                <td class="col-criterio">Serializacion</td>
+                <td>Automatica (<code>serialize()</code> de PHP)</td>
+                <td>Manual: JSON con JsonSerializer</td>
+                <td>Automatica si implementa <code>Serializable</code></td>
+            </tr>
+            <tr>
+                <td class="col-criterio">Escalabilidad</td>
+                <td>Problemas con multiples servidores (sticky sessions o Redis)</td>
+                <td>Redis nativo con <code>AddStackExchangeRedisCache()</code></td>
+                <td>Spring Session + Redis para multiples instancias</td>
+            </tr>
+            <tr>
+                <td class="col-criterio">Prevencion CSRF</td>
+                <td>Token manual en formularios</td>
+                <td>Tag Helper <code>asp-antiforgery</code> automatico</td>
+                <td><code>CsrfTokenRepository</code> en Spring Security</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="caja-orange">
+        <div class="caja-orange-header">Flags de seguridad de cookies de sesion</div>
+        <div class="caja-orange-content">
+            Los tres flags que debe tener <strong>siempre</strong> la cookie de sesion en produccion:
+            <ul>
+                <li><strong>HttpOnly:</strong> impide que JavaScript del cliente acceda a la cookie; previene robo de sesion via XSS.</li>
+                <li><strong>Secure:</strong> la cookie solo se envia por HTTPS; previene interceptacion en redes inseguras.</li>
+                <li><strong>SameSite=Strict:</strong> la cookie no se envia en solicitudes originadas desde otros sitios; previene CSRF.</li>
+            </ul>
+        </div>
+    </div>
+
+    <h2>Por que el PFC usa JWT en lugar de sesiones de servidor</h2>
+
+    <p>Las sesiones de servidor funcionan bien para aplicaciones web tradicionales (multi-page). El PFC usa una arquitectura diferente: el frontend es una <strong>SPA Angular</strong> que consume una <strong>API REST</strong> de Spring Boot. Esta arquitectura tiene tres caracteristicas que hacen que las sesiones de servidor sean inadecuadas y que JWT sea la solucion correcta.</p>
+
+    <table class="table-red">
+        <thead>
+            <tr>
+                <th class="col-criterio">Problema</th>
+                <th>Sesion de servidor (no usada en el PFC)</th>
+                <th>JWT en cookie HttpOnly (PFC)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="col-criterio">Estado en el servidor</td>
+                <td>El servidor debe almacenar la sesion; complica el escalado horizontal (multiples instancias)</td>
+                <td>El servidor es <strong>stateless</strong>: no almacena nada; cualquier instancia puede validar el token</td>
+            </tr>
+            <tr>
+                <td class="col-criterio">API REST y SPA</td>
+                <td>Las APIs REST no deben usar cookies de sesion de forma nativa; el frontend necesita manejar CORS y credenciales manualmente</td>
+                <td>El JWT viaja en el encabezado <code>Authorization: Bearer</code> o en cookie HttpOnly; compatible con CORS en Angular</td>
+            </tr>
+            <tr>
+                <td class="col-criterio">Revocacion</td>
+                <td>Sencilla: eliminar la sesion del servidor</td>
+                <td>Requiere blacklist en Redis (como se implementa en el PFC con el JTI)</td>
+            </tr>
+            <tr>
+                <td class="col-criterio">Seguridad del token</td>
+                <td>Cookie de sesion: si se roba el ID, el atacante tiene acceso hasta que expire</td>
+                <td>JWT en cookie <strong>HttpOnly</strong>: JavaScript no puede leerla; accessToken de corta vida (1h); refreshToken en cookie separada</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="caja-blue">
+        <div class="caja-blue-header">Conclusion practica</div>
+        <div class="caja-blue-content">
+            Para una aplicacion web tradicional multi-pagina (como la que se construye en esta practica), las sesiones de servidor son la herramienta correcta. Para una API REST consumida por una SPA Angular (como el PFC), JWT almacenado en cookie HttpOnly es la solucion correcta porque mantiene la naturaleza <strong>stateless</strong> de REST, escala horizontalmente sin configuracion adicional, y protege el token contra ataques XSS (JavaScript no puede leer una cookie HttpOnly).
+        </div>
+    </div>
+
+</body>
+</html>
