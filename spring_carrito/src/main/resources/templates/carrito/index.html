@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Carrito Spring Boot</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 2rem auto }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem }
+        th, td { padding: 8px 12px; border: 1px solid #ddd; text-align: left }
+        th { background: #f49b32; color: white }
+        .btn { padding: 6px 14px; border: none; border-radius: 4px; cursor: pointer }
+        .btn-add { background: #27ae60; color: white }
+        .btn-del { background: #e74c3c; color: white }
+        .btn-clear { background: #7f8c8d; color: white }
+    </style>
+</head>
+<body>
+    <h1>Tienda - Sesion Spring Boot</h1>
+
+    <!-- Catalogo -->
+    <h2>Catalogo</h2>
+    <form th:action="@{/carrito/agregar}" method="post">
+        <select name="nombre">
+            <option th:each="item : ${catalogo}"
+                    th:value="${item}" th:text="${item}"></option>
+        </select>
+        <button class="btn btn-add">Agregar al carrito</button>
+    </form>
+
+    <!-- Carrito -->
+    <h2>Carrito</h2>
+    <p th:if="${#lists.isEmpty(carrito)}">El carrito esta vacio.</p>
+
+    <div th:if="${!#lists.isEmpty(carrito)}">
+        <table>
+            <tr><th>Producto</th><th>Precio</th><th>Accion</th></tr>
+            <tr th:each="item, iter : ${carrito}">
+                <td th:text="${item.nombre}"></td>
+                <td th:text="'$' + ${item.precio}"></td>
+                <td>
+                    <form th:action="@{/carrito/eliminar}" method="post" style="margin:0">
+                        <input type="hidden" name="indice" th:value="${iter.index}">
+                        <button class="btn btn-del">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        </table>
+        <p><strong th:text="'Total: $' + ${total}"></strong></p>
+        <form th:action="@{/carrito/limpiar}" method="post">
+            <button class="btn btn-clear">Vaciar carrito</button>
+        </form>
+    </div>
+
+    <p style="color:#999;font-size:0.8rem"
+       th:text="'Session ID: ' + ${sessionId}"></p>
+</body>
+</html>
